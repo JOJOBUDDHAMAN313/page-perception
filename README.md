@@ -1,8 +1,8 @@
-# page-perception
+﻿# page-perception
 
-MCP server that gives an agent the **accessibility tree** of a page instead of a pile of pixels — plus a screenshot and a structural diff.
+MCP server that gives an agent the **accessibility tree** of a page instead of a pile of pixels â€” plus a screenshot and a structural diff.
 
-Pixels cost thousands of tokens and are non-deterministic. An AX tree is a few hundred tokens, stable, and testable — which is what an agent loop actually needs.
+Pixels cost thousands of tokens and are non-deterministic. An AX tree is a few hundred tokens, stable, and testable â€” which is what an agent loop actually needs.
 
 ## Tools
 
@@ -10,7 +10,7 @@ Pixels cost thousands of tokens and are non-deterministic. An AX tree is a few h
 |---|---|
 | `get_page_state` | AX tree (role/name/depth), title, text, latency |
 | `screenshot` | PNG base64 |
-| `diff_pages` | added / removed AX nodes between two URLs — for visual regression and monitoring |
+| `diff_pages` | added / removed AX nodes between two URLs â€” for visual regression and monitoring |
 
 ## Free tier and price
 
@@ -24,7 +24,7 @@ Overage returns a `note` field with the address rather than a hard error, so an 
 
 ## Live endpoint
 
-`https://provides-securities-cleaner-disable.trycloudflare.com/state?url=<url>` � 402 with price and payTo; `/llms.txt` and `/agent.json` for discovery.
+`https://provides-securities-cleaner-disable.trycloudflare.com/state?url=<url>` — 402 with price and payTo; `/llms.txt` and `/agent.json` for discovery.
 
 Quick tunnel, so the host changes between restarts.
 
@@ -53,4 +53,9 @@ Single page, no auth, no JS waiting beyond `domcontentloaded`, 30 s timeout, loc
 
 MIT.
 
+
+
+## Verified live
+
+First settled call: tx `0xaacad9c7fa1400ce585ee22f6570968b272b000dc86a3a9cddbe9e80f6bffc46` — payer 1.000 -> 0.998 USDC, this address 2.000 -> 2.002.
 
