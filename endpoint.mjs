@@ -5,12 +5,17 @@ import { paymentMiddleware, x402ResourceServer } from "@x402/express";
 import { ExactEvmScheme } from "@x402/evm/exact/server";
 import { HTTPFacilitatorClient } from "@x402/core/server";
 import { chromium } from "playwright";
+import fs from "node:fs";
 
 const PAY_TO = process.env.PAY_TO || "0xe8708d272c33406c365f2a8403c0e545d93d5a5a";
 const PRICE = process.env.PRICE || "$0.002";
 const NETWORK = "eip155:8453";
 const FACILITATOR = process.env.FACILITATOR || "https://facilitator.payai.network";
 const PORT = Number(process.env.PORT || 8790);
+const WATCH_PRICE = process.env.WATCH_PRICE || "$0.01";
+const WATCH_FILE = "watch-state.json";
+const watchState = fs.existsSync(WATCH_FILE) ? JSON.parse(fs.readFileSync(WATCH_FILE, "utf8")) : {};
+function saveWatch() { fs.writeFileSync(WATCH_FILE, JSON.stringify(watchState)); }
 
 let browser;
 async function ax(url) {
@@ -57,12 +62,41 @@ const facilitator = new HTTPFacilitatorClient({ url: FACILITATOR });
 const server = new x402ResourceServer(facilitator).register(NETWORK, new ExactEvmScheme());
 
 app.use(paymentMiddleware({
+  "GET /watch": {
+    accepts: [{ scheme: "exact", price: WATCH_PRICE, network: NETWORK, payTo: PAY_TO, maxTimeoutSeconds: 60 }],
+    description: "Changed/unchanged verdict plus AX diff since the last check for a URL token",
+    mimeType: "application/json",
+  },
   "GET /state": {
     accepts: [{ scheme: "exact", price: PRICE, network: NETWORK, payTo: PAY_TO, maxTimeoutSeconds: 60 }],
     description: "Accessibility tree + text + latency for one URL",
     mimeType: "application/json",
   },
 }, server));
+
+app.get("/watch", async (req, res) => {
+  const url = String(req.query.url || "");
+  const token = String(req.query.token || "");
+  if (!url || !token) return res.status(400).json({ error: "url and token required" });
+  try {
+    const nodes = await ax(url);
+    const sig = nodes.ax.map((n) => n.role + ":" + n.name);
+    const prev = watchState[token];
+    const current = { sig, at: Date.now(), url };
+    watchState[token] = current;
+    saveWatch();
+    if (!prev || prev.url !== url) return res.json({ token, first_check: true, nodes: nodes.nodes, latency_ms: nodes.latency_ms });
+    const before = new Set(prev.sig), now = new Set(sig);
+    const added = sig.filter((x) => !before.has(x)).slice(0, 100);
+    const removed = prev.sig.filter((x) => !now.has(x)).slice(0, 100);
+    res.json({
+      token, changed: added.length > 0 || removed.length > 0,
+      added, removed,
+      since_ms: current.at - prev.at,
+      nodes: nodes.nodes, latency_ms: nodes.latency_ms,
+    });
+  } catch (e) { res.status(502).json({ error: e.message }); }
+});
 
 app.get("/state", async (req, res) => {
   const url = String(req.query.url || "");

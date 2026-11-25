@@ -59,3 +59,10 @@ MIT.
 
 First settled call: tx `0xaacad9c7fa1400ce585ee22f6570968b272b000dc86a3a9cddbe9e80f6bffc46` — payer 1.000 -> 0.998 USDC, this address 2.000 -> 2.002.
 
+## Watch — priced per check
+
+`GET /watch?url=<url>&token=<id>` — $0.01 USDC on Base.
+
+Returns `first_check:true` on the first call for a token, then `changed:true|false` with `added`/`removed` AX nodes and `since_ms`. State is per token, on disk. Same URL required; a different URL resets the token to a first check.
+
+Verified paid: `first_check` then `changed:true` against a page whose text moves.
