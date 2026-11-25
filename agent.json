@@ -1,0 +1,32 @@
+{
+  "name": "page-perception",
+  "description": "Accessibility-first page state for agents: AX tree, screenshot, structural diff.",
+  "version": "0.1.0",
+  "url": "https://github.com/JOJOBUDDHAMAN313/page-perception",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false
+  },
+  "skills": [
+    {
+      "id": "page_state",
+      "name": "Page state",
+      "description": "AX tree, text and latency for a URL. Cheaper than pixels.",
+      "tags": ["browser", "accessibility", "scraping", "agent"]
+    },
+    {
+      "id": "page_diff",
+      "name": "Page diff",
+      "description": "Structural delta between two URLs for regression and monitoring.",
+      "tags": ["monitoring", "visual-regression", "ci"]
+    }
+  ],
+  "payment": {
+    "protocol": "x402",
+    "network": "base",
+    "asset": "USDC",
+    "payTo": "0xe8708d272c33406c365f2a8403c0e545d93d5a5a",
+    "pricePerCall": "0.002",
+    "freeTier": "100/day"
+  }
+}

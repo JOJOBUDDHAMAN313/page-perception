@@ -1,0 +1,9 @@
+{
+  "name": "page-perception",
+  "version": "0.1.0",
+  "description": "Accessibility-first page perception for agents: AX tree, screenshot, structural diff. Cheaper and more deterministic than pixels.",
+  "type": "module",
+  "bin": { "page-perception": "server.mjs" },
+  "dependencies": { "playwright": "^1.65.0" },
+  "license": "MIT"
+}
